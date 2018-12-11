@@ -5,6 +5,8 @@ import Component from './component';
 const React = { createElement, Component };
 const ReactDOM = { render };
 
+const arr = ['no1', 'no2', 'no3'];
+
 class Hello extends Component {
   render() {
     return (
@@ -16,8 +18,7 @@ class Hello extends Component {
       >
         {this.props.name}
         <div>{this.props.children}</div>
-        <br />
-        123123
+        <div>{this.props.arr && this.props.arr.map(no => <div>{no}</div>)}</div>
         <h3>
           hello
           <span style={{ color: 'red', fontWeight: 'bold' }}> world! </span>
@@ -27,13 +28,20 @@ class Hello extends Component {
   }
 }
 
+const Hi = ({ color, age }) => <div>hi function component, {age} {color}</div>;
+
 class App extends Component {
   render() {
     return (
       <div>
         <h2>app</h2>
-        <Hello name="xp">aaaa</Hello>
+        <Hi age="12" color="red"/>
+        <Hi age="18" color="blue"/>
+        <Hello name="xp" arr={arr}>
+          aaaa
+        </Hello>
         <Hello name="hanpei">bbb</Hello>
+        <Hello />
       </div>
     );
   }

@@ -1,3 +1,5 @@
+// ReactElement
+
 class Vnode {
   constructor(type, props, key, ref) {
     this.type = type;

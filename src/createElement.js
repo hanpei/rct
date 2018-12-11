@@ -1,10 +1,7 @@
 import Vnode from './vnode';
 
-function initConfig(config) {
-  return (config.ref = undefined);
-}
-
 function createElement(type, config, ...children) {
+  console.log(children);
   let props = {};
   let key = null;
   let ref = null;
@@ -13,6 +10,8 @@ function createElement(type, config, ...children) {
     key = config.key === undefined ? null : String(config.key);
     ref = config.ref === undefined ? null : config.ref;
   }
+
+  children = children.filter(child => child !== false);
 
   props = {
     key,
