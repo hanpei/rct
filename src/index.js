@@ -73,18 +73,49 @@ class Demo extends Component {
     };
   }
   render() {
-    console.log(this.state.number);
-
     return (
       <div>
-        {this.state.number}
+        <h3>{this.state.number}</h3>
+        <button
+          onClick={() => {
+            console.log('click');
+            this.setState({
+              number: this.state.number + 1,
+            });
+          }}
+        >
+          click
+        </button>
       </div>
-      
-      // <div>
-      //   <h2>demo</h2>
-      //   <h3>{this.state.number}</h3>
-      //   <div>hello rxt</div>
-      // </div>
+    );
+  }
+}
+class Demo2 extends Component {
+  constructor() {
+    super();
+    this.state = {
+      number: 0,
+    };
+  }
+  render() {
+    return (
+      <div>
+        <div>
+          <h2>demo</h2>
+          <h3>{this.state.number}</h3>
+          <button
+            onClick={() => {
+              console.log('click');
+              this.setState({
+                number: this.state.number + 1,
+              });
+            }}
+          >
+            click
+          </button>
+          <div>hello rxt</div>
+        </div>
+      </div>
     );
   }
 }

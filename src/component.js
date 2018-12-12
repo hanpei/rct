@@ -1,3 +1,4 @@
+import { _render } from './render';
 class Component {
   constructor(props = {}) {
     this.props = props;
@@ -12,21 +13,24 @@ class Component {
     }
     this.nextState = null;
     const newVnode = this.render();
+
     this.vnode = update(oldVnode, newVnode, this.dom);
+    this.dom = this.vnode._hostNode;
   }
   setState(partialState) {
     this.nextState = Object.assign({}, this.state, partialState);
-    return {
-      ...this.state,
-      ...partialState,
-    };
     this.updateComponent();
   }
-  render() {
-    console.log(this);
-  }
+  render() {}
 }
 
 export default Component;
 
-function update(oldVNode, newVnode, parentNode) {}
+export function update(oldVnode, newVnode, parentDomNode) {
+  newVnode._hostNode = oldVnode._hostNode;
+  console.log(oldVnode._hostNode);
+  console.log(newVnode._hostNode);
+  const dom = _render(newVnode, parentDomNode, true);
+  newVnode._hostNode = dom;
+  return newVnode;
+}

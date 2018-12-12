@@ -2,7 +2,6 @@ import Vnode from './vnode';
 
 function childrenHandler(children) {
   if (children.length === 1) {
-    console.log('====');
     children = children[0] === undefined ? [] : children[0];
   } else {
     children = children.filter(child => child !== undefined);
