@@ -18,8 +18,6 @@ export function _render(vnode, container, isUpdate = false) {
 
   // dom
   if (typeof vnode.type === 'string') {
-    console.log('------');
-
     domNode = renderDomNode(vnode, container);
   }
 
@@ -36,12 +34,11 @@ export function _render(vnode, container, isUpdate = false) {
     const p = container.parentNode;
     console.log(p);
     if (p) {
+      p.insertBefore(domNode, vnode._hostNode);
       p.removeChild(vnode._hostNode);
-      p.appendChild(domNode);
     } else {
       console.log(container.parentNode);
     }
-
   } else {
     container.appendChild(domNode);
   }
@@ -65,7 +62,7 @@ function renderDomNode(vnode, container) {
     children = vnode.props.children;
   }
   children.forEach(child => _render(child, dom));
-  vnode.dom = dom
+  vnode.dom = dom;
   return dom;
 }
 
