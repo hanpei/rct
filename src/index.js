@@ -8,17 +8,30 @@ const ReactDOM = { render };
 const arr = ['no1', 'no2', 'no3'];
 
 class Hello extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { number: 0 };
+  }
+
   render() {
     return (
       <div
         className="bg"
         onClick={() => {
-          console.log('click');
+          this.setState({
+            number: this.state.number + 1,
+          });
         }}
       >
+        <h1>{this.state.number}</h1>
         {this.props.name}
         <div>{this.props.children}</div>
-        <div>{this.props.arr && this.props.arr.map(no => <div>{no}</div>)}</div>
+        <div>
+          {this.props.arr &&
+            this.props.arr.map(no => (
+              <div style={{ fontWeight: 'bold' }}>{no}</div>
+            ))}
+        </div>
         <h3>
           hello
           <span style={{ color: 'red', fontWeight: 'bold' }}> world! </span>
@@ -28,15 +41,20 @@ class Hello extends Component {
   }
 }
 
-const Hi = ({ color, age }) => <div>hi function component, {age} {color}</div>;
+const Age = ({ age, children }) => (
+  <div>
+    age is {age} {children}
+  </div>
+);
+const Color = ({ color }) => <div>color is {color} </div>;
 
 class App extends Component {
   render() {
     return (
       <div>
         <h2>app</h2>
-        <Hi age="12" color="red"/>
-        <Hi age="18" color="blue"/>
+        <Age age="12">...</Age>
+        <Color color="blue" />
         <Hello name="xp" arr={arr}>
           aaaa
         </Hello>
@@ -47,4 +65,36 @@ class App extends Component {
   }
 }
 
-render(<App />, document.getElementById('root'));
+class Demo extends Component {
+  constructor() {
+    super();
+    this.state = {
+      number: 0,
+    };
+  }
+  render() {
+    console.log(this.state.number);
+
+    return (
+      <div>
+        {this.state.number}
+      </div>
+      
+      // <div>
+      //   <h2>demo</h2>
+      //   <h3>{this.state.number}</h3>
+      //   <div>hello rxt</div>
+      // </div>
+    );
+  }
+}
+
+// const demo = 'hello rxt'
+const demo = (
+  <div>
+    <h2>demo</h2>
+    <div>hello rxt</div>
+  </div>
+);
+
+render(<Demo />, document.getElementById('root'));

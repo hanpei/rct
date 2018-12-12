@@ -1,64 +1,70 @@
-import Compoent from './component'
+import Component from './component';
 
 function render(vnode, container) {
-  return container.appendChild(_render(vnode));
+  return _render(vnode, container);
 }
 
-function _render(vnode) {
+function _render(vnode, container) {
   console.log(vnode);
-  // null or undefined
-  if (vnode === undefined || vnode === null || typeof vnode === 'boolean') {
-    vnode = '';
+  let domNode;
+  if (vnode === undefined || vnode === null) {
+    return;
   }
 
   // text
   if (typeof vnode === 'string' || typeof vnode === 'number') {
-    return renderTextNode(vnode);
+    domNode = renderTextNode(String(vnode), container);
   }
 
   // dom
   if (typeof vnode.type === 'string') {
-    return renderDomNode(vnode)
+    domNode = renderDomNode(vnode, container);
   }
 
   // component
   if (typeof vnode.type === 'function') {
-    return renderComponent(vnode.type, vnode.props);
+    domNode = renderComponent(vnode, container);
   }
+  container.appendChild(domNode);
+  return domNode;
 }
 
-function renderTextNode(vnode) {
+function renderTextNode(vnode, parentNode) {
+  
   const textNode = document.createTextNode(String(vnode));
   return textNode;
 }
 
-function renderDomNode(vnode) {
+function renderDomNode(vnode, container) {
+  // debugger
   const dom = document.createElement(vnode.type);
   setAttrbutes(dom, vnode.props);
-  if (typeof vnode.props.children === 'string') {
-    render(vnode.props.children, dom);
+  let children = [];
+  if (!Array.isArray(vnode.props.children)) {
+    children = [vnode.props.children];
   } else {
-    vnode.props.children &&
-      vnode.props.children.forEach(child => render(child, dom));
+    children = vnode.props.children;
   }
+  children.forEach(child => _render(child, dom));
   return dom;
 }
 
-function renderComponent(ComponentConstructor, props) {
+function renderComponent(vnode, parent) {
+  const { type: ComponentConstructor, props } = vnode;
+  let instance;
   if (ComponentConstructor.prototype && ComponentConstructor.prototype.render) {
     // 处理class组件
-    let instance = new ComponentConstructor(props);
-    const vnode = instance.render();
-    return _render(vnode);
+    instance = new ComponentConstructor(props);
   } else {
     // 处理functional组件
-    let instance = new Compoent(props)
-    console.log('=============================');
+    instance = new Component(props);
     instance.render = function() {
-      return ComponentConstructor(props)
-    }
-    return _render(instance.render())
+      return ComponentConstructor(props);
+    };
   }
+  const renderdVnode = instance.render();
+  const domNode = _render(renderdVnode, parent);
+  return domNode;
 }
 
 function setAttrbutes(dom, props) {
