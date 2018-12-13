@@ -64,7 +64,7 @@ class Demo extends Component {
   constructor() {
     super();
     this.state = {
-      number: 1,
+      number: 0,
     };
   }
   render() {
@@ -126,4 +126,4 @@ const demo = (
 
 render(<Demo />, document.getElementById('root'));
 // render(demo, document.getElementById('root'));
-// render(<Hello />, document.getElementById('root'));
+// render(<Hello arr={arr} name='xp' />, document.getElementById('root'));

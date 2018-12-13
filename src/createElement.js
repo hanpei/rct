@@ -10,11 +10,9 @@ function createElement(type, config, ...children) {
   ref = config.ref === undefined ? null : config.ref;
 
   if (children.length === 1) {
-    children = children[0] === undefined ? [] : children[0];
+    children = children[0];
   } else {
-    children = children.filter(
-      child => child !== undefined || child !== null || child !== false
-    );
+    children = children.filter(child => child !== undefined || child !== null);
   }
 
   props = {
