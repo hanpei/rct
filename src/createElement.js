@@ -1,28 +1,26 @@
 import Vnode from './vnode';
 
-function childrenHandler(children) {
-  if (children.length === 1) {
-    children = children[0] === undefined ? [] : children[0];
-  } else {
-    children = children.filter(child => child !== undefined);
-  }
-  return children;
-}
-
 function createElement(type, config, ...children) {
   let props = {};
   let key = null;
   let ref = null;
 
-  if (config !== null) {
-    key = config.key === undefined ? null : String(config.key);
-    ref = config.ref === undefined ? null : config.ref;
+  config = config === null ? {} : config;
+  key = config.key === undefined ? null : String(config.key);
+  ref = config.ref === undefined ? null : config.ref;
+
+  if (children.length === 1) {
+    children = children[0] === undefined ? [] : children[0];
+  } else {
+    children = children.filter(
+      child => child !== undefined || child !== null || child !== false
+    );
   }
 
   props = {
     key,
     ref,
-    children: childrenHandler(children),
+    children,
     ...config,
   };
 

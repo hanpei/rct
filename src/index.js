@@ -52,14 +52,9 @@ class App extends Component {
   render() {
     return (
       <div>
-        <h2>app</h2>
-        <Age age="12">...</Age>
-        <Color color="blue" />
-        <Hello name="xp" arr={arr}>
-          aaaa
-        </Hello>
-        <Hello name="hanpei">bbb</Hello>
-        <Hello />
+        <h2>demo</h2>
+        <div>hello rxt</div>
+        <span />
       </div>
     );
   }
@@ -69,7 +64,7 @@ class Demo extends Component {
   constructor() {
     super();
     this.state = {
-      number: 0,
+      number: 1,
     };
   }
   render() {
@@ -125,7 +120,10 @@ const demo = (
   <div>
     <h2>demo</h2>
     <div>hello rxt</div>
+    <span />
   </div>
 );
 
 render(<Demo />, document.getElementById('root'));
+// render(demo, document.getElementById('root'));
+// render(<Hello />, document.getElementById('root'));
