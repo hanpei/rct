@@ -10,7 +10,6 @@ function _render(element, parentNode) {
 }
 
 export function instantiate(element) {
-  console.log(element);
   const isEmptyNode = element === undefined || element === null;
   const isTextNode = typeof element === 'string' || typeof element === 'number';
   const isDomNode =
@@ -33,8 +32,6 @@ export function instantiate(element) {
 
   // dom
   if (isDomNode) {
-    console.log('=======');
-    console.log(element);
     const { type, props } = element;
     const hasChildren = props.hasOwnProperty('children');
 
@@ -54,17 +51,23 @@ export function instantiate(element) {
 
   // component
   if (isComponentNode) {
-    const { type: ComponentClass, props } = element;
+    const { type: ComponentCtor, props } = element;
     const hasChildren = props.hasOwnProperty('children');
 
-    if (ComponentClass.prototype && ComponentClass.prototype.render) {
-      const instance = new ComponentClass(props);
-      const renderedElement = instance.render();
-      instance.__dom = instantiate(renderedElement);
-      return instance.__dom;
+    let instance;
+    if (ComponentCtor.prototype && ComponentCtor.prototype.render) {
+      instance = new ComponentCtor(props);
     } else {
-      // TODO: function component
+      instance = new Component(props);
+      instance.constructor = ComponentCtor;
+      instance.render = function() {
+        return ComponentCtor(props);
+      };
     }
+
+    const renderedElement = instance.render();
+    instance.__dom = instantiate(renderedElement);
+    return instance.__dom;
   }
 }
 

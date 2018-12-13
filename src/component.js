@@ -10,9 +10,10 @@ class Component {
     const nextState = Object.assign({}, this.state, partialState);
     this.state = nextState;
     const element = this.render();
-    console.log(element);
     const prevDom = this.__dom;
-    const nextDom = instantiate(element)
+    const nextDom = instantiate(element);
+    console.log(prevDom);
+    console.log(nextDom);
     const parentDom = prevDom.parentNode;
     parentDom.replaceChild(nextDom, prevDom);
     this.__dom = nextDom;
