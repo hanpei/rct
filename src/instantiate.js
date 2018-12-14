@@ -1,14 +1,3 @@
-import Component from './component';
-
-function render(element, container) {
-  return _render(element, container);
-}
-
-function _render(element, parentNode) {
-  console.log(element);
-  const dom = instantiate(element);
-  parentNode.appendChild(dom);
-}
 
 export function instantiate(element) {
   console.log(element);
@@ -97,5 +86,3 @@ function setDomProps(dom, props) {
     }
   }
 }
-
-export default render;

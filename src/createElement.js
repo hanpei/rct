@@ -9,11 +9,9 @@ function createElement(type, config, ...children) {
   key = config.key === undefined ? null : String(config.key);
   ref = config.ref === undefined ? null : config.ref;
 
-  if (children.length === 1) {
-    children = children[0];
-  } else {
-    children = children.filter(child => child !== undefined || child !== null);
-  }
+  children = children
+    .filter(child => child !== undefined || child !== null)
+    .map(c => (c instanceof Object ? c : createTextElement(c)));
 
   props = {
     key,
@@ -26,3 +24,7 @@ function createElement(type, config, ...children) {
 }
 
 export default createElement;
+
+function createTextElement(value) {
+  return createElement('TEXT_ELEMENT', { nodeValue: value });
+}
