@@ -7,8 +7,9 @@ function render(element, container) {
 
 export function _render(element, parentNode) {
   const instance = instantiate(element);
+  
   const dom = instance.mount();
-  dom && parentNode.appendChild(dom);
+  parentNode.appendChild(dom);
 }
 
 export default render;

@@ -21,6 +21,7 @@ export default function instantiate(element) {
 
   // text
   if (isTextNode) {
+    console.log('isTextNode');
     const instance = new TextComponent(element);
     return instance;
   }
@@ -33,23 +34,8 @@ export default function instantiate(element) {
 
   // component
   if (isComponentNode) {
-    const { type: ComponentCtor, props } = element;
-    const hasChildren = props.hasOwnProperty('children');
-
-    let instance;
-    if (ComponentCtor.prototype && ComponentCtor.prototype.render) {
-      instance = new ComponentCtor(props);
-    } else {
-      instance = new Component(props);
-      instance.constructor = ComponentCtor;
-      instance.render = function() {
-        return ComponentCtor(props);
-      };
-    }
-
-    const renderedElement = instance.render();
-    instance.__dom = instantiate(renderedElement);
-    return instance.__dom;
+    const instance = new CompositeComponent(element);
+    return instance;
   }
 }
 
@@ -86,6 +72,7 @@ class TextComponent {
   mount() {
     const nodeValue = this.currentElement.props.nodeValue;
     this.dom = document.createTextNode(nodeValue);
+    console.log(this.dom);
     return this.dom;
   }
 }
@@ -118,27 +105,25 @@ class DomComponent {
 class CompositeComponent {
   constructor(element) {
     this.currentElement = element;
-    this.dom = null;
-    this.childInstances = null;
+    this.publicInstance = null;
+    this.childInstance = null;
   }
   mount() {
     const { type: ComponentCtor, props } = this.currentElement;
-    const hasChildren = props.hasOwnProperty('children');
 
-    let publicInstance;
     if (ComponentCtor.prototype && ComponentCtor.prototype.render) {
-      publicInstance = new ComponentCtor(props);
+      this.publicInstance = new ComponentCtor(props);
     } else {
-      publicInstance = new Component(props);
-      publicInstance.constructor = ComponentCtor;
-      publicInstance.render = function() {
+      this.publicInstance = new Component(props);
+      this.publicInstance.constructor = ComponentCtor;
+      this.publicInstance.render = function() {
         return ComponentCtor(props);
       };
     }
 
-    const childElement = publicInstance.render();
+    const childElement = this.publicInstance.render();
     // 暂不支持Component.render 返回数组[]
-    this.childInstances = instantiate(childElement);
-    this.dom = childInstance.mount();
+    this.childInstance = instantiate(childElement);
+    return this.childInstance.mount();
   }
 }
