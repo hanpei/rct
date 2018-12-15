@@ -1,8 +1,11 @@
+import Component from './component';
+import { _render } from './render';
 
-export function instantiate(element) {
+export default function instantiate(element) {
   console.log(element);
   const { type, props } = element;
-  const isEmptyNode = element === undefined || element === null;
+  const isEmptyNode =
+    element === undefined || element === null || element.length === 0;
   const isTextNode = type === 'TEXT_ELEMENT';
   const isDomNode =
     typeof element === 'object' && typeof element.type === 'string';
@@ -11,33 +14,21 @@ export function instantiate(element) {
 
   // empty
   if (isEmptyNode) {
-    const node = document.createTextNode('');
-    return node;
+    console.log('isEmptyNode');
+    const instance = new TextComponent({ props: { nodeValue: '' } });
+    return instance;
   }
 
   // text
   if (isTextNode) {
-    const node = document.createTextNode(element.props.nodeValue);
-    return node;
+    const instance = new TextComponent(element);
+    return instance;
   }
 
   // dom
   if (isDomNode) {
-    const { type, props } = element;
-    const hasChildren = props.hasOwnProperty('children');
-
-    const node = document.createElement(type);
-
-    if (hasChildren) {
-      if (Array.isArray(props.children)) {
-        props.children.map(child => _render(child, node));
-      } else {
-        _render(props.children, node);
-      }
-    }
-
-    setDomProps(node, props);
-    return node;
+    const instance = new DomComponent(element);
+    return instance;
   }
 
   // component
@@ -84,5 +75,70 @@ function setDomProps(dom, props) {
       }
       dom[key] = element;
     }
+  }
+}
+
+class TextComponent {
+  constructor(element) {
+    this.currentElement = element;
+    this.dom = null;
+  }
+  mount() {
+    const nodeValue = this.currentElement.props.nodeValue;
+    this.dom = document.createTextNode(nodeValue);
+    return this.dom;
+  }
+}
+
+class DomComponent {
+  constructor(element) {
+    this.currentElement = element;
+    this.childInstances = null;
+    this.dom = null;
+  }
+  mount() {
+    const { type, props } = this.currentElement;
+    this.dom = document.createElement(type);
+    setDomProps(this.dom, props);
+
+    const hasChildren = props.hasOwnProperty('children');
+    console.log(this.currentElement);
+    if (hasChildren) {
+      const childElements = props.children || [];
+      this.childInstances = childElements.map(child => instantiate(child));
+      this.childInstances
+        .map(childInstance => childInstance.mount())
+        .forEach(childDom => this.dom.appendChild(childDom));
+    }
+
+    return this.dom;
+  }
+}
+
+class CompositeComponent {
+  constructor(element) {
+    this.currentElement = element;
+    this.dom = null;
+    this.childInstances = null;
+  }
+  mount() {
+    const { type: ComponentCtor, props } = this.currentElement;
+    const hasChildren = props.hasOwnProperty('children');
+
+    let publicInstance;
+    if (ComponentCtor.prototype && ComponentCtor.prototype.render) {
+      publicInstance = new ComponentCtor(props);
+    } else {
+      publicInstance = new Component(props);
+      publicInstance.constructor = ComponentCtor;
+      publicInstance.render = function() {
+        return ComponentCtor(props);
+      };
+    }
+
+    const childElement = publicInstance.render();
+    // 暂不支持Component.render 返回数组[]
+    this.childInstances = instantiate(childElement);
+    this.dom = childInstance.mount();
   }
 }

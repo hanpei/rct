@@ -124,7 +124,7 @@ const demo = (
   </div>
 );
 
-render(<Demo />, document.getElementById('root'));
+// render(<Demo />, document.getElementById('root'));
 // render(<Age age='12' >hahaha</Age>, document.getElementById('root'));
 // render(demo, document.getElementById('root'));
-// render(<Hello arr={arr} name='xp' />, document.getElementById('root'));
+render(<Hello arr={arr} name='xp' />, document.getElementById('root'));

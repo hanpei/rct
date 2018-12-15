@@ -1,36 +1,3 @@
-/**
- * 生成组件实例
- * @param {ReactElement|string|number|false|null} vnode
- */
-function _getInstance(vnode) {
-  // console.log(vnode);
-  let instance = null;
-
-  if (vnode === undefined || vnode === null) {
-    // console.log('EmptyNodeComponent');
-    instance = new EmptyNodeComponent();
-  }
-  if (typeof vnode === 'string' || typeof vnode === 'number') {
-    // console.log('TextNodeComponent');
-    instance = new TextNodeComponent(vnode);
-  }
-  if (typeof vnode === 'object' && !!vnode) {
-    const { type, props } = vnode;
-    if (typeof type === 'string') {
-      // console.log('DomDodeComponent');
-      instance = new DomDodeComponent(vnode);
-    } else if (typeof type === 'function') {
-      instance = new CompositeComponent(vnode);
-    } else {
-      throw new Error(`something wrong with vnode type: ${vnode.type}`);
-    }
-  }
-  return instance;
-}
-
-
-
-
 class EmptyNodeComponent {
   constructor() {
     this.vnode = null;
@@ -94,3 +61,4 @@ class CompositeComponent {
     return renderdResult;
   }
 }
+export { TextNodeComponent, DomDodeComponent, CompositeComponent };
