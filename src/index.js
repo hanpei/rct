@@ -18,6 +18,7 @@ class Hello extends Component {
       <div
         className="bg"
         onClick={() => {
+          console.log('click');
           this.setState({
             number: this.state.number + 1,
           });
@@ -54,7 +55,7 @@ class App extends Component {
       <div>
         <h2>demo</h2>
         <div>hello rxt</div>
-        {/* <span /> */}
+        <span />
       </div>
     );
   }
@@ -85,46 +86,18 @@ class Demo extends Component {
     );
   }
 }
-class Demo2 extends Component {
-  constructor() {
-    super();
-    this.state = {
-      number: 0,
-    };
-  }
-  render() {
-    return (
-      <div>
-        <div>
-          <h2>demo</h2>
-          <h3>{this.state.number}</h3>
-          <button
-            onClick={() => {
-              console.log('click');
-              this.setState({
-                number: this.state.number + 1,
-              });
-            }}
-          >
-            click
-          </button>
-          <div>hello rxt</div>
-        </div>
-      </div>
-    );
-  }
-}
 
 // const demo = 'hello rxt'
 const demo = (
   <div>
     <h2>demo</h2>
     <div>hello rxt</div>
+    <div>{arr.map(i => <div>{i}</div>)}</div>
     <span />
   </div>
 );
 
 // render(<App />, document.getElementById('root'));
-// render(<Age age='12' >hahaha</Age>, document.getElementById('root'));
+render(<Age age='12' >hahaha</Age>, document.getElementById('root'));
 // render(demo, document.getElementById('root'));
-render(<Hello arr={arr} name='xp' />, document.getElementById('root'));
+// render(<Hello arr={arr} name='xp' />, document.getElementById('root'));

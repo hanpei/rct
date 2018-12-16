@@ -1,12 +1,16 @@
-export default class Component {
+class Component {
   constructor(props) {
     this.props = props;
-    this.state = this.state || {};
-    this.__updater = null; // Set by CompositeComponent
+    this.state = null;
   }
-
   setState(partialState) {
     this.state = Object.assign({}, this.state, partialState);
-    this.__updater();
+    this.__updater()
   }
+  __updater() {
+    console.log('setState updater');
+  }
+  render() {}
 }
+
+export default Component;

@@ -1,11 +1,7 @@
-// ReactElement
-
 class Vnode {
-  constructor(type, props, key, ref) {
+  constructor(type, props) {
     this.type = type;
     this.props = props;
-    this.key = key;
-    this.ref = ref;
   }
 }
 

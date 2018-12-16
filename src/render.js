@@ -1,15 +1,10 @@
-import Component from './component';
-import {instantiate} from './instantiate';
+import instantiate from './instance';
 
 function render(element, container) {
-  return _render(element, container);
-}
-
-export function _render(element, parentNode) {
+  console.log(element);
   const instance = instantiate(element);
-  
-  const dom = instance.mount();
-  parentNode.appendChild(dom);
+  const dom = instance.mount()
+  container.appendChild(dom);
 }
 
 export default render;
