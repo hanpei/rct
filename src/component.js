@@ -1,16 +1,12 @@
-import { instantiate } from './render';
-
-class Component {
+export default class Component {
   constructor(props) {
     this.props = props;
     this.state = this.state || {};
-    this.__updater = null;
+    this.__updater = null; // Set by CompositeComponent
   }
+
   setState(partialState) {
     this.state = Object.assign({}, this.state, partialState);
     this.__updater();
   }
-  render() {}
 }
-
-export default Component;

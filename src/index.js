@@ -26,12 +26,12 @@ class Hello extends Component {
         <h1>{this.state.number}</h1>
         {this.props.name}
         <div>{this.props.children}</div>
-        {/* <div>
+        <div>
           {this.props.arr &&
             this.props.arr.map(no => (
               <div style={{ fontWeight: 'bold' }}>{no}</div>
             ))}
-        </div> */}
+        </div>
         <h3>
           hello
           <span style={{ color: 'red', fontWeight: 'bold' }}> world! </span>
@@ -124,7 +124,7 @@ const demo = (
   </div>
 );
 
-render(<App />, document.getElementById('root'));
+// render(<App />, document.getElementById('root'));
 // render(<Age age='12' >hahaha</Age>, document.getElementById('root'));
 // render(demo, document.getElementById('root'));
-// render(<Hello arr={arr} name='xp' />, document.getElementById('root'));
+render(<Hello arr={arr} name='xp' />, document.getElementById('root'));

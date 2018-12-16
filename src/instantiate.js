@@ -1,8 +1,8 @@
 import Component from './component';
 import { _render } from './render';
 
-export default function instantiate(element) {
-  console.log(element);
+export  function instantiate(element) {
+  // console.log(element);
   const { type, props } = element;
   const isEmptyNode =
     element === undefined || element === null || element.length === 0;
@@ -14,14 +14,14 @@ export default function instantiate(element) {
 
   // empty
   if (isEmptyNode) {
-    console.log('isEmptyNode');
+    // console.log('isEmptyNode');
     const instance = new TextComponent({ props: { nodeValue: '' } });
     return instance;
   }
 
   // text
   if (isTextNode) {
-    console.log('isTextNode');
+    // console.log('isTextNode');
     const instance = new TextComponent(element);
     return instance;
   }
@@ -72,7 +72,7 @@ class TextComponent {
   mount() {
     const nodeValue = this.currentElement.props.nodeValue;
     this.dom = document.createTextNode(nodeValue);
-    console.log(this.dom);
+    // console.log(this.dom);
     return this.dom;
   }
 }
@@ -89,7 +89,7 @@ class DomComponent {
     setDomProps(this.dom, props);
 
     const hasChildren = props.hasOwnProperty('children');
-    console.log(this.currentElement);
+    // console.log(this.currentElement);
     if (hasChildren) {
       const childElements = props.children || [];
       this.childInstances = childElements.map(child => instantiate(child));

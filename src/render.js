@@ -1,5 +1,5 @@
 import Component from './component';
-import instantiate from './instantiate';
+import {instantiate} from './instantiate';
 
 function render(element, container) {
   return _render(element, container);
