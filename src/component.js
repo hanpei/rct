@@ -5,11 +5,9 @@ class Component {
   }
   setState(partialState) {
     this.state = Object.assign({}, this.state, partialState);
-    this.__updater()
+    this.__updater();
   }
-  __updater() {
-    console.log('setState updater');
-  }
+  __updater() {}
   render() {}
 }
 
