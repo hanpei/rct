@@ -24,11 +24,17 @@ class TextComponent {
     this.dom = null;
   }
   mount() {
-    this.dom = document.createTextNode(this.currentElement);
+    console.log('this.currentElement', this.currentElement);
+    const text = this.currentElement.props.nodeValue;
+    console.log(text);
+    this.dom = document.createTextNode(text);
     return this.dom;
   }
   update(nextElement) {
-    this.dom.nodeValue = nextElement;
+    const text = nextElement.props.nodeValue;
+    if (this.dom.nodeValue !== text) {
+      this.dom.nodeValue = text;
+    }
   }
   getDom() {
     return this.dom;
@@ -203,8 +209,9 @@ function removeDomProps(dom, props) {
 }
 
 function getElementType(element) {
+  console.log(element);
   // text
-  if (typeof element === 'string' || typeof element === 'number') {
+  if (element.type === 'TEXT_ELEMENT') {
     return 'TEXT_ELEMENT';
   } else if (typeof element === 'object') {
     const { type, props } = element;
