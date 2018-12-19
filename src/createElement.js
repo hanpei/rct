@@ -5,7 +5,7 @@ function createElement(type, config, ...children) {
 
   props.children = []
     .concat(...children)
-    .filter(i => i !== undefined || i !== null)
+    .filter(i => i !== undefined || i !== null || i !== false)
     .map(c => (typeof c === 'object' ? c : createTextElement(c)));
 
   return new Vnode(type, props);

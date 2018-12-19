@@ -78,12 +78,13 @@ class Demo extends Component {
   render() {
     return (
       <div>
-        <h3>{this.state.number}</h3>
-        <button
-          onClick={this.handleClick}
+        <h3
+          style={this.state.number > 3 ? { color: 'red' } : { color: 'black' }}
         >
-          click
-        </button>
+          {this.state.number}
+        </h3>
+        {this.state.number}
+        <button onClick={this.handleClick}>click</button>
       </div>
     );
   }
@@ -101,6 +102,6 @@ const demo = (
 
 // render(<App />, document.getElementById('root'));
 // render(<Age age='12' >hahaha</Age>, document.getElementById('root'));
-// render(<Demo />, document.getElementById('root'));
+render(<Demo />, document.getElementById('root'));
 // render(demo, document.getElementById('root'));
-render(<Hello arr={arr} name='xp' />, document.getElementById('root'));
+// render(<Hello arr={arr} name='xp' />, document.getElementById('root'));

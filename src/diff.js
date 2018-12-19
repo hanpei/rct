@@ -6,22 +6,22 @@ export const REMOVE = 'REMOVE';
 export const UPDATE_PROP = 'UPDATE_PROP';
 export const REMOVE_PROP = 'REMOVE_PROP';
 
-function diff(prevElement, nextElement) {
+function diff(prevElement, nextElement, index = 0) {
   // prev === null
   if (isNull(prevElement)) {
-    return { type: CREATE, nextElement };
+    return { type: CREATE, nextElement, index };
   }
 
   // next === null
   if (isNull(nextElement)) {
-    return { type: REMOVE };
+    return { type: REMOVE, index };
   }
 
   // prev.type !== next.type
   if (!isSameElement(prevElement, nextElement)) {
-    console.log(prevElement, nextElement);
     return { type: REPLACE, nextElement };
   } else {
+    // console.log(prevElement, nextElement);
     return {
       type: UPDATE,
       children: diffChildren(prevElement, nextElement),
@@ -34,7 +34,7 @@ function diffChildren(prev, next) {
   const patches = [];
   const len = Math.max(prev.props.children.length, next.props.children.length);
   for (let i = 0; i < len; i++) {
-    patches[i] = diff(prev.props.children[i], next.props.children[i]);
+    patches[i] = diff(prev.props.children[i], next.props.children[i], i);
   }
   return patches;
 }
@@ -55,8 +55,8 @@ function diffProps(prev, next) {
     if (prevPropValue !== nextPropValue) {
       const patch = {
         type: UPDATE_PROP,
-        props: { [key]: nextPropValue },
         prevProps: { [key]: prevPropValue },
+        nextProps: { [key]: nextPropValue },
       };
       patches.push(patch);
     }
@@ -75,5 +75,6 @@ const isSameElement = (prev, next) =>
   typeof prev === 'object' &&
   typeof next === 'object' &&
   prev.type === next.type;
+const isTextElement = (elment) => element.type === 'TEXT_ELEMENT';
 
 export default diff;

@@ -1,10 +1,12 @@
 import Component from './component';
 import diff from './diff';
-import patch from './patch'
+import patch from './patch';
 
 function instantiate(element) {
-  console.log(element);
   const elementType = getElementType(element);
+  if (elementType === 'EMPTY_ELEMENT') {
+    return new EmptyComponent();
+  }
   if (elementType === 'TEXT_ELEMENT') {
     const instance = new TextComponent(element);
     return instance;
@@ -19,6 +21,18 @@ function instantiate(element) {
   }
 }
 
+class EmptyComponent {
+  constructor() {
+    this.currentElement = '';
+    this.dom = null;
+  }
+  mount() {
+    const text = this.currentElement;
+    this.dom = document.createTextNode(text);
+    return this.dom;
+  }
+}
+
 class TextComponent {
   constructor(element) {
     this.currentElement = element;
@@ -29,14 +43,19 @@ class TextComponent {
     this.dom = document.createTextNode(text);
     return this.dom;
   }
+  /*
   update(nextElement) {
     const text = nextElement.props.nodeValue;
     if (this.dom.nodeValue !== text) {
       this.dom.nodeValue = text;
     }
   }
+  */
   getDom() {
     return this.dom;
+  }
+  setDom(newDom) {
+    this.dom = newDom;
   }
 }
 
@@ -71,6 +90,7 @@ class DomComponent {
     const nextChildElements = nextProps.children || [];
     this.updateChildren(prevChildElements, nextChildElements, nextElement);
   }
+  /*
   updateChildren(prev, next, nextElement) {
     const prevChildElements = prev;
     const nextChildElements = next;
@@ -115,8 +135,12 @@ class DomComponent {
     this.currentElement = nextElement;
     this.childInstances = nextChildInstances;
   }
+  */
   getDom() {
     return this.dom;
+  }
+  setDom(newDom) {
+    this.dom = newDom;
   }
 }
 
@@ -147,26 +171,19 @@ class CompositeComponent {
     const { props } = this.currentElement;
     this.publicInstance.props = props;
 
+    console.log(this.renderedInstance.getDom());
+
     const prevRenderedElement = this.renderedInstance.currentElement;
     const nextRenderedElement = this.publicInstance.render();
-
+    console.log(prevRenderedElement, nextRenderedElement);
+    const dom = this.getDom();
     const patches = diff(prevRenderedElement, nextRenderedElement);
     console.log(patches);
-    const prevDom = this.getDom();
-    const parent = prevDom.parentNode
-    patch(parent, patches)
 
-    // console.log(prevRenderedElement);
-    // console.log(nextRenderedElement);
-
-    // if (prevRenderedElement.type === nextRenderedElement.type) {
-    //   this.renderedInstance.update(nextRenderedElement);
-    // } else {
-    //   const prevDom = this.getDom();
-    //   this.renderedInstance = instantiate(nextRenderedElement);
-    //   const nextDom = this.renderedInstance.mount();
-    //   prevDom.parentNode.replaceChild(nextDom, prevDom);
-    // }
+    patch(dom.parentNode, patches);
+    this.renderedInstance = instantiate(nextRenderedElement);
+    // console.log(this.renderedInstance);
+    this.renderedInstance.setDom(dom);
   }
   getDom() {
     return this.renderedInstance.getDom();
@@ -215,12 +232,24 @@ export function removeDomProps(dom, props) {
 
 export function updateDomProps(dom, prevProps, nextProps) {
   const allProps = Object.assign({}, prevProps, nextProps);
+  console.log(allProps);
   Object.keys(allProps).forEach(key => {
+    const prevPropValue = prevProps[key];
+    const nextPropValue = nextProps[key];
+
     if (key === 'children') {
       return;
     }
-    const prevPropValue = prevProps[key];
-    const nextPropValue = nextProps[key];
+    if (key === 'style') {
+      console.log(prevPropValue);
+      console.log(nextPropValue);
+
+      for (const styleName in nextPropValue) {
+        dom.style[styleName] = nextPropValue[styleName];
+      }
+
+      return;
+    }
 
     // console.log(prevPropValue);
     // console.log(nextPropValue);
@@ -237,6 +266,9 @@ export function updateDomProps(dom, prevProps, nextProps) {
 
 function getElementType(element) {
   // text
+  if (element === null || element === undefined) {
+    return 'EMPTY_ELEMENT';
+  }
   if (element.type === 'TEXT_ELEMENT') {
     return 'TEXT_ELEMENT';
   } else if (typeof element === 'object') {
