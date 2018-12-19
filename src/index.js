@@ -67,18 +67,20 @@ class Demo extends Component {
     this.state = {
       number: 0,
     };
+    // this.handleClick = this.handleClick.bind(this);
   }
+  handleClick = () => {
+    console.log('click');
+    this.setState({
+      number: this.state.number + 1,
+    });
+  };
   render() {
     return (
       <div>
         <h3>{this.state.number}</h3>
         <button
-          onClick={() => {
-            console.log('click');
-            this.setState({
-              number: this.state.number + 1,
-            });
-          }}
+          onClick={this.handleClick}
         >
           click
         </button>

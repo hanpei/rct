@@ -1,5 +1,6 @@
 import Component from './component';
 import diff from './diff';
+import patch from './patch'
 
 function instantiate(element) {
   console.log(element);
@@ -24,9 +25,7 @@ class TextComponent {
     this.dom = null;
   }
   mount() {
-    console.log('this.currentElement', this.currentElement);
     const text = this.currentElement.props.nodeValue;
-    console.log(text);
     this.dom = document.createTextNode(text);
     return this.dom;
   }
@@ -64,8 +63,9 @@ class DomComponent {
     const prevProps = this.currentElement.props;
     const nextProps = nextElement.props;
 
-    removeDomProps(this.dom, prevProps);
-    setDomProps(this.dom, nextProps);
+    // removeDomProps(this.dom, prevProps);
+    // setDomProps(this.dom, nextProps);
+    updateDomProps(this.dom, prevProps, nextProps);
 
     const prevChildElements = prevProps.children || [];
     const nextChildElements = nextProps.children || [];
@@ -116,7 +116,7 @@ class DomComponent {
     this.childInstances = nextChildInstances;
   }
   getDom() {
-    return this.dom();
+    return this.dom;
   }
 }
 
@@ -144,31 +144,36 @@ class CompositeComponent {
   }
   update(nextElement) {
     this.currentElement = nextElement || this.currentElement;
-    console.log(this.currentElement);
-    console.log(this.renderedInstance);
     const { props } = this.currentElement;
     this.publicInstance.props = props;
 
     const prevRenderedElement = this.renderedInstance.currentElement;
     const nextRenderedElement = this.publicInstance.render();
-    console.log(prevRenderedElement);
-    console.log(nextRenderedElement);
 
-    if (prevRenderedElement.type === nextRenderedElement.type) {
-      this.renderedInstance.update(nextRenderedElement);
-    } else {
-      const prevDom = this.getDom();
-      this.renderedInstance = instantiate(nextRenderedElement);
-      const nextDom = this.renderedInstance.mount();
-      prevDom.parentNode.replaceChild(nextDom, prevDom);
-    }
+    const patches = diff(prevRenderedElement, nextRenderedElement);
+    console.log(patches);
+    const prevDom = this.getDom();
+    const parent = prevDom.parentNode
+    patch(parent, patches)
+
+    // console.log(prevRenderedElement);
+    // console.log(nextRenderedElement);
+
+    // if (prevRenderedElement.type === nextRenderedElement.type) {
+    //   this.renderedInstance.update(nextRenderedElement);
+    // } else {
+    //   const prevDom = this.getDom();
+    //   this.renderedInstance = instantiate(nextRenderedElement);
+    //   const nextDom = this.renderedInstance.mount();
+    //   prevDom.parentNode.replaceChild(nextDom, prevDom);
+    // }
   }
   getDom() {
     return this.renderedInstance.getDom();
   }
 }
 
-function setDomProps(dom, props) {
+export function setDomProps(dom, props) {
   for (const propName in props) {
     if (props.hasOwnProperty(propName)) {
       if (propName === 'children') {
@@ -190,7 +195,7 @@ function setDomProps(dom, props) {
   }
 }
 
-function removeDomProps(dom, props) {
+export function removeDomProps(dom, props) {
   for (const propName in props) {
     if (props.hasOwnProperty(propName)) {
       if (propName === 'children') {
@@ -208,8 +213,29 @@ function removeDomProps(dom, props) {
   }
 }
 
+export function updateDomProps(dom, prevProps, nextProps) {
+  const allProps = Object.assign({}, prevProps, nextProps);
+  Object.keys(allProps).forEach(key => {
+    if (key === 'children') {
+      return;
+    }
+    const prevPropValue = prevProps[key];
+    const nextPropValue = nextProps[key];
+
+    // console.log(prevPropValue);
+    // console.log(nextPropValue);
+    // console.log(nextPropValue === prevPropValue);
+
+    if (prevPropValue !== nextPropValue) {
+      dom[key] = nextPropValue;
+    }
+    if (nextPropValue === undefined || nextPropValue === null) {
+      dom[key] = nextPropValue;
+    }
+  });
+}
+
 function getElementType(element) {
-  console.log(element);
   // text
   if (element.type === 'TEXT_ELEMENT') {
     return 'TEXT_ELEMENT';
