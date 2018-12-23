@@ -75,6 +75,6 @@ const isSameElement = (prev, next) =>
   typeof prev === 'object' &&
   typeof next === 'object' &&
   prev.type === next.type;
-const isTextElement = (elment) => element.type === 'TEXT_ELEMENT';
+const isTextElement = elment => element.type === 'TEXT_ELEMENT';
 
 export default diff;

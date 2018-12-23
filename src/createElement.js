@@ -5,7 +5,7 @@ function createElement(type, config, ...children) {
 
   props.children = []
     .concat(...children)
-    .filter(i => i !== undefined || i !== null || i !== false)
+    .filter(i => i !== null)
     .map(c => (typeof c === 'object' ? c : createTextElement(c)));
 
   return new Vnode(type, props);
@@ -14,5 +14,8 @@ function createElement(type, config, ...children) {
 export default createElement;
 
 function createTextElement(value) {
+  if (typeof value === 'boolean') {
+    return;
+  }
   return createElement('TEXT_ELEMENT', { nodeValue: value });
 }

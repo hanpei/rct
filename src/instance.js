@@ -3,10 +3,11 @@ import diff from './diff';
 import patch from './patch';
 
 function instantiate(element) {
+  console.log(element);
   const elementType = getElementType(element);
-  if (elementType === 'EMPTY_ELEMENT') {
-    return new EmptyComponent();
-  }
+  // if (elementType === 'EMPTY_ELEMENT') {
+  //   return new EmptyComponent();
+  // }
   if (elementType === 'TEXT_ELEMENT') {
     const instance = new TextComponent(element);
     return instance;
@@ -43,14 +44,6 @@ class TextComponent {
     this.dom = document.createTextNode(text);
     return this.dom;
   }
-  /*
-  update(nextElement) {
-    const text = nextElement.props.nodeValue;
-    if (this.dom.nodeValue !== text) {
-      this.dom.nodeValue = text;
-    }
-  }
-  */
   getDom() {
     return this.dom;
   }
@@ -74,6 +67,7 @@ class DomComponent {
     const childElements = props.children;
     this.childInstances = childElements.map(instantiate);
     this.childInstances
+      .filter(c => c !== undefined)
       .map(childInstance => childInstance.mount())
       .forEach(childDom => this.dom.appendChild(childDom));
     return this.dom;
@@ -90,52 +84,6 @@ class DomComponent {
     const nextChildElements = nextProps.children || [];
     this.updateChildren(prevChildElements, nextChildElements, nextElement);
   }
-  /*
-  updateChildren(prev, next, nextElement) {
-    const prevChildElements = prev;
-    const nextChildElements = next;
-    const prevChildInstances = this.childInstances;
-    const nextChildInstances = [];
-    const len = Math.max(prevChildElements.length, nextChildElements.length);
-
-    for (let i = 0; i < len; i++) {
-      const prevChildElement = prevChildElements[i];
-      const nextChildElement = nextChildElements[i];
-
-      if (prevChildElement === undefined) {
-        // add
-        const nextChildInstance = instantiate(nextChildElement);
-        nextChildInstances.push(nextChildInstance);
-        const childDom = nextChildInstance.mount();
-        this.dom.appendChild(childDom);
-      } else if (nextChildElement === undefined) {
-        // remove
-        const prevChildInstance = prevChildInstances[i];
-        const childDom = prevChildInstance.getDom();
-        this.dom.removeChild(childDom);
-      } else if (
-        prevChildElement.type &&
-        prevChildElement.type === nextChildElement.type
-      ) {
-        // update
-        const childInstance = prevChildInstances[i];
-        nextChildInstances.push(childInstance);
-        childInstance.update(nextChildElement);
-      } else {
-        // replace
-        const prevChildInstance = prevChildInstances[i];
-        const nextChildInstance = instantiate(nextChildElement);
-        nextChildInstances.push(nextChildInstance);
-        const nextChildDom = nextChildInstance.mount();
-        const prevChildDom = prevChildInstance.getDom();
-        this.dom.replaceChild(nextChildDom, prevChildDom);
-      }
-    }
-
-    this.currentElement = nextElement;
-    this.childInstances = nextChildInstances;
-  }
-  */
   getDom() {
     return this.dom;
   }

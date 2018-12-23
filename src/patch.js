@@ -25,6 +25,7 @@ export default function patch(parent, patches, index = 0) {
     case CREATE: {
       const { nextElement, index } = patches;
       const instance = instantiate(nextElement);
+      console.log(instance);
       const dom = instance.mount();
       const referenceNode = parent.childNodes[index];
       parent.insertBefore(dom, referenceNode);

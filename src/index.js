@@ -78,6 +78,7 @@ class Demo extends Component {
   render() {
     return (
       <div>
+        {this.state.number > 0 && <div>123</div>}
         <h3
           style={this.state.number > 3 ? { color: 'red' } : { color: 'black' }}
         >
@@ -93,6 +94,7 @@ class Demo extends Component {
 // const demo = 'hello rxt'
 const demo = (
   <div>
+    {null}
     <h2>demo</h2>
     <div>hello rxt</div>
     <div>{arr.map(i => <div>{i}</div>)}</div>
