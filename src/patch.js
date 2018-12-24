@@ -41,6 +41,14 @@ export default function patch(parent, patches, index = 0) {
       parent.removeChild(referenceNode);
       break;
     }
+    case REPLACE: {
+      const { nextElement } = patches;
+      const nextInstance = instantiate(nextElement);
+      const dom = nextInstance.mount();
+      console.log(dom);
+      parent.replaceChild(dom, el);
+      break;
+    }
 
     case UPDATE: {
       const { props, children } = patches;
