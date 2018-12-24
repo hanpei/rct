@@ -78,13 +78,13 @@ class Demo extends Component {
   render() {
     return (
       <div>
-        {this.state.number > 0 && <div>123</div>}
+        {/* {this.state.number > 0 && <div>123</div>}
         <h3
           style={this.state.number > 3 ? { color: 'red' } : { color: 'black' }}
         >
           {this.state.number}
-        </h3>
-        {this.state.number}
+        </h3> */}
+        <div>{this.state.number}</div>
         <button onClick={this.handleClick}>click</button>
       </div>
     );

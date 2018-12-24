@@ -3,11 +3,7 @@ import diff from './diff';
 import patch from './patch';
 
 function instantiate(element) {
-  console.log(element);
   const elementType = getElementType(element);
-  // if (elementType === 'EMPTY_ELEMENT') {
-  //   return new EmptyComponent();
-  // }
   if (elementType === 'TEXT_ELEMENT') {
     const instance = new TextComponent(element);
     return instance;
@@ -19,18 +15,6 @@ function instantiate(element) {
   if (elementType === 'COMPONENT_ELEMENT') {
     const instance = new CompositeComponent(element);
     return instance;
-  }
-}
-
-class EmptyComponent {
-  constructor() {
-    this.currentElement = '';
-    this.dom = null;
-  }
-  mount() {
-    const text = this.currentElement;
-    this.dom = document.createTextNode(text);
-    return this.dom;
   }
 }
 
@@ -119,18 +103,15 @@ class CompositeComponent {
     const { props } = this.currentElement;
     this.publicInstance.props = props;
 
-    console.log(this.renderedInstance.getDom());
 
     const prevRenderedElement = this.renderedInstance.currentElement;
     const nextRenderedElement = this.publicInstance.render();
-    console.log(prevRenderedElement, nextRenderedElement);
     const dom = this.getDom();
     const patches = diff(prevRenderedElement, nextRenderedElement);
     console.log(patches);
 
     patch(dom.parentNode, patches);
     this.renderedInstance = instantiate(nextRenderedElement);
-    // console.log(this.renderedInstance);
     this.renderedInstance.setDom(dom);
   }
   getDom() {
@@ -180,7 +161,6 @@ export function removeDomProps(dom, props) {
 
 export function updateDomProps(dom, prevProps, nextProps) {
   const allProps = Object.assign({}, prevProps, nextProps);
-  console.log(allProps);
   Object.keys(allProps).forEach(key => {
     const prevPropValue = prevProps[key];
     const nextPropValue = nextProps[key];
@@ -189,19 +169,11 @@ export function updateDomProps(dom, prevProps, nextProps) {
       return;
     }
     if (key === 'style') {
-      console.log(prevPropValue);
-      console.log(nextPropValue);
-
       for (const styleName in nextPropValue) {
         dom.style[styleName] = nextPropValue[styleName];
       }
-
       return;
     }
-
-    // console.log(prevPropValue);
-    // console.log(nextPropValue);
-    // console.log(nextPropValue === prevPropValue);
 
     if (prevPropValue !== nextPropValue) {
       dom[key] = nextPropValue;
