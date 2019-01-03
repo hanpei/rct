@@ -13,11 +13,11 @@ import instantiate, {
 } from './instance';
 
 export default function patch(parent, patches, index = 0) {
-  console.group('parentDom and patch');
-  console.log('childNodes index', index);
-  console.log(parent);
-  console.log(patches);
-  console.groupEnd();
+  // console.group('parentDom and patch');
+  // console.log('childNodes index', index);
+  // console.log(parent);
+  // console.log(patches);
+  // console.groupEnd();
 
   if (!patches) {
     return;
@@ -28,8 +28,10 @@ export default function patch(parent, patches, index = 0) {
   switch (patches.type) {
     case CREATE: {
       const { nextElement, index } = patches;
+      console.log(patches);
       const instance = instantiate(nextElement);
-      const dom = instance.mount();
+      console.log(instance);
+      const dom = instance.dom;
       const referenceNode = parent.childNodes[index];
       parent.insertBefore(dom, referenceNode);
       break;
@@ -44,8 +46,7 @@ export default function patch(parent, patches, index = 0) {
     case REPLACE: {
       const { nextElement } = patches;
       const nextInstance = instantiate(nextElement);
-      const dom = nextInstance.mount();
-      console.log(dom);
+      const dom = nextInstance.dom;
       parent.replaceChild(dom, el);
       break;
     }

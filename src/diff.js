@@ -7,7 +7,7 @@ export const UPDATE_PROP = 'UPDATE_PROP';
 export const REMOVE_PROP = 'REMOVE_PROP';
 
 function diff(prevElement, nextElement, index = 0) {
-  console.log(prevElement, nextElement);
+  // console.log(prevElement, nextElement);
   // prev === null
   if (isNull(prevElement)) {
     return { type: CREATE, nextElement, index };

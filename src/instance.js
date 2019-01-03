@@ -5,75 +5,59 @@ import patch from './patch';
 function instantiate(element) {
   const elementType = getElementType(element);
   if (elementType === 'TEXT_ELEMENT') {
-    const instance = new TextComponent(element);
+    const instance = createTextElement(element);
     return instance;
   }
   if (elementType === 'DOM_ELEMENT') {
-    const instance = new DomComponent(element);
+    const instance = createDomElement(element);
     return instance;
   }
   if (elementType === 'COMPONENT_ELEMENT') {
-    const instance = new CompositeComponent(element);
+    const instance = createCompositeComponent(element);
     return instance;
   }
 }
 
-class TextComponent {
-  constructor(element) {
-    this.currentElement = element;
-    this.dom = null;
-  }
-  mount() {
-    const text = this.currentElement.props.nodeValue;
-    this.dom = document.createTextNode(text);
-    return this.dom;
-  }
-  getDom() {
-    return this.dom;
-  }
-  setDom(newDom) {
-    this.dom = newDom;
-  }
+function createTextElement(element) {
+  const text = element.props.nodeValue;
+  const dom = document.createTextNode(text);
+  const instance = { dom, element };
+  return instance;
 }
 
-class DomComponent {
-  constructor(element) {
-    this.currentElement = element;
-    this.childInstances = null;
-    this.dom = null;
-  }
-  mount() {
-    const { type, props } = this.currentElement;
-    this.dom = document.createElement(type);
+function createDomElement(element) {
+  const { type, props } = element;
+  const dom = document.createElement(type);
+  setDomProps(dom, props);
+  const childElements = props.children;
+  const childInstances = childElements.map(instantiate);
+  childInstances
+    .filter(c => c !== undefined)
+    .map(instance => instance.dom)
+    .forEach(childDom => dom.appendChild(childDom));
 
-    setDomProps(this.dom, props);
+  const instance = { element, dom };
+  return instance;
+}
 
-    const childElements = props.children;
-    this.childInstances = childElements.map(instantiate);
-    this.childInstances
-      .filter(c => c !== undefined)
-      .map(childInstance => childInstance.mount())
-      .forEach(childDom => this.dom.appendChild(childDom));
-    return this.dom;
+function createCompositeComponent(element) {
+  const { type: ComponentCtor, props } = element;
+  let publicInstance;
+  if (ComponentCtor.prototype && ComponentCtor.prototype.render) {
+    publicInstance = new ComponentCtor(props);
+  } else {
+    publicInstance = new Component(props);
+    publicInstance.constructor = ComponentCtor;
+    publicInstance.render = function() {
+      return this.constructor(props);
+    };
   }
-  update(nextElement) {
-    const prevProps = this.currentElement.props;
-    const nextProps = nextElement.props;
-
-    // removeDomProps(this.dom, prevProps);
-    // setDomProps(this.dom, nextProps);
-    updateDomProps(this.dom, prevProps, nextProps);
-
-    const prevChildElements = prevProps.children || [];
-    const nextChildElements = nextProps.children || [];
-    this.updateChildren(prevChildElements, nextChildElements, nextElement);
-  }
-  getDom() {
-    return this.dom;
-  }
-  setDom(newDom) {
-    this.dom = newDom;
-  }
+  const renderedElement = publicInstance.render();
+  const renderedInstance = instantiate(renderedElement);
+  const dom = renderedInstance.dom;
+  const instance = { element: renderedElement,publicInstance, renderedInstance, dom };
+  publicInstance.__internalInstance = instance;
+  return instance;
 }
 
 class CompositeComponent {
@@ -102,7 +86,6 @@ class CompositeComponent {
     this.currentElement = nextElement || this.currentElement;
     const { props } = this.currentElement;
     this.publicInstance.props = props;
-
 
     const prevRenderedElement = this.renderedInstance.currentElement;
     const nextRenderedElement = this.publicInstance.render();
