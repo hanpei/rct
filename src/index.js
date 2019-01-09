@@ -67,6 +67,10 @@ class Demo extends Component {
     this.state = {
       number: 0,
     };
+
+    // setInterval(() => {
+    //   this.setState({ number: this.state.number + 1 })
+    // }, 1500);
     // this.handleClick = this.handleClick.bind(this);
   }
   handleClick = () => {

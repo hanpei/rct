@@ -10,8 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "webpack": "^4.1.1",
-    "webpack-dev-server": "^3.1.1"
+    "webpack": "^4.28.3",
+    "webpack-dev-server": "^3.1.14"
   },
   "devDependencies": {
     "babel-loader": "^7.1.4",

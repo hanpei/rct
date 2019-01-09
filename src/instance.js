@@ -60,48 +60,6 @@ function createCompositeComponent(element) {
   return instance;
 }
 
-class CompositeComponent {
-  constructor(element) {
-    this.currentElement = element;
-    this.publicInstance = null;
-    this.renderedInstance = null;
-  }
-  mount() {
-    const { type: ComponentCtor, props } = this.currentElement;
-    if (ComponentCtor.prototype && ComponentCtor.prototype.render) {
-      this.publicInstance = new ComponentCtor(props);
-    } else {
-      this.publicInstance = new Component(props);
-      this.publicInstance.constructor = ComponentCtor;
-      this.publicInstance.render = function() {
-        return this.constructor(props);
-      };
-    }
-    this.publicInstance.__updater = this.update.bind(this);
-    const renderedElement = this.publicInstance.render();
-    this.renderedInstance = instantiate(renderedElement);
-    return this.renderedInstance.mount();
-  }
-  update(nextElement) {
-    this.currentElement = nextElement || this.currentElement;
-    const { props } = this.currentElement;
-    this.publicInstance.props = props;
-
-    const prevRenderedElement = this.renderedInstance.currentElement;
-    const nextRenderedElement = this.publicInstance.render();
-    const dom = this.getDom();
-    const patches = diff(prevRenderedElement, nextRenderedElement);
-    console.log(patches);
-
-    patch(dom.parentNode, patches);
-    this.renderedInstance = instantiate(nextRenderedElement);
-    this.renderedInstance.setDom(dom);
-  }
-  getDom() {
-    return this.renderedInstance.getDom();
-  }
-}
-
 export function setDomProps(dom, props) {
   for (const propName in props) {
     if (props.hasOwnProperty(propName)) {
